@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+<body>
+
+<h2>Subir archivo a Azure Blob Storage</h2>
+
+<input type="file" id="fileInput" />
+
+<button onclick="uploadToAzure()">Subir</button>
+
+<script src="https://cdn.jsdelivr.net/npm/@azure/storage-blob@12"></script>
+<script>
+    const { BlobServiceClient } = require("@azure/storage-blob");
+
+    async function uploadToAzure() {
+        const fileInput = document.getElementById("fileInput");
+        const file = fileInput.files[0];
+        const reader = new FileReader();
+
+        reader.onloadend = async (event) => {
+            const blobServiceClient = BlobServiceClient.fromConnectionString("https://almacendocs.blob.core.windows.net/ines?sp=racwdl&st=2023-11-05T23:26:42Z&se=2023-11-20T07:26:42Z&spr=https&sv=2022-11-02&sr=c&sig=bYQXqko5XZEfS%2BARHgPnERoqlOExocYfOzMtaa6FXio%3D");
+            const containerClient = blobServiceClient.getContainerClient("ines");
+            const blockBlobClient = containerClient.getBlockBlobClient(file.name);
+            const uploadBlobResponse = await blockBlobClient.upload(event.target.result, file.size);
+            console.log(`Upload block blob ${file.name} successfully`, uploadBlobResponse.requestId);
+        };
+
+        reader.readAsArrayBuffer(file);
+    }
+</script>
+
+</body>
+</html>

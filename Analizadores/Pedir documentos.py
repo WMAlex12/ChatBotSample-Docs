@@ -1,27 +1,33 @@
-from azure.storage.blob import BlobServiceClient
+from azure.storage.blob import BlobServiceClient, BlobClient, ContainerClient
+import os
 
-# Configura la información de tu cuenta de Azure Blob Storage
-connection_string = "3oB9JilP76rHl5/79LfPfjEBcJeVYRbs3a06N6KnciCou2eDXUDij51pi1U/Vm6aIwkU/DCfKSlT+AStYhAUrQ=="  # Debes obtener esto desde Azure Portal
+# Replace with your own Azure Storage account connection string
+connection_string = "DefaultEndpointsProtocol=https;AccountName=almacendocs;AccountKey=DwIGSi+kPOURIqmzu2Ho2WS9QWNoQX6QGxsoO0OITLnwZC9kMXGEeJUOjPrzPijuKEU7gj+KD4U++AStnn9Kpg==;EndpointSuffix=core.windows.net"
 
+# Replace with the name of the container you want to download from
 container_name = "ines"
-destination_directory = r"C:\Users\karel\Documents\Hackathon\ChatBotSample-Docs\INEDocs"
 
-# Inicializa el servicio de Blob de Azure
+# Create a BlobServiceClient using the connection string
 blob_service_client = BlobServiceClient.from_connection_string(connection_string)
+
+# Get a reference to the container
 container_client = blob_service_client.get_container_client(container_name)
 
-# Enumera los blobs en el contenedor
-blobs = container_client.list_blobs()
+# List all blobs in the container
+blob_list = container_client.list_blobs()
 
-for blob in blobs:
-    # Crea una URL de descarga para cada archivo
-    blob_url = container_client.get_blob_client(blob.name).url
+# ...
 
-    # Descarga el archivo
-    with open(f"{destination_directory}/{blob.name}", "wb") as f:
-        print(f"Descargando {blob.name}...")
-        blob_client = container_client.get_blob_client(blob.name)
-        download_stream = blob_client.download_blob()
-        f.write(download_stream.readall())
-
-print("Descarga de archivos completada.")
+for blob in blob_list:
+    blob_name = blob.name
+    local_file_path = os.path.join("C:\\Users\\karel\\Documents\\Hackathon\\ChatBotSample-Docs\\INEDocs", blob_name)
+    
+    # Create a BlobClient for the specific blob
+    blob_client = container_client.get_blob_client(blob_name)
+    
+    # Download the blob to the local file path
+    with open(local_file_path, "wb") as f:
+        data = blob_client.download_blob()
+        data.readinto(f)
+    
+    print(f"Downloaded {blob_name} to {local_file_path}")

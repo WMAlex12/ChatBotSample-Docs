@@ -6,9 +6,9 @@ from azure.ai.formrecognizer import DocumentAnalysisClient
 from azure.storage.blob import BlobServiceClient, ContainerClient
 
 # Configuración de Cognitive Services
-endpoint = "https://inextracion.cognitiveservices.azure.com/"
-key = "98173045d06045b8a98452d3acdbf4d1"
-model_id = "25b03e97-ffa1-4933-b590-251ffd32ed18"
+endpoint = "https://domiciliocomp.cognitiveservices.azure.com/"
+key = "2b4e991bdfea449c88965e3e61198b34"
+model_id = "91410dfb-d73e-4509-ab0f-555ff124e842"
 
 document_analysis_client = DocumentAnalysisClient(
     endpoint=endpoint, credential=AzureKeyCredential(key)
@@ -16,8 +16,8 @@ document_analysis_client = DocumentAnalysisClient(
 
 # Configuración de Storage Account
 connection_string = "DefaultEndpointsProtocol=https;AccountName=almacendocs;AccountKey=DwIGSi+kPOURIqmzu2Ho2WS9QWNoQX6QGxsoO0OITLnwZC9kMXGEeJUOjPrzPijuKEU7gj+KD4U++AStnn9Kpg==;EndpointSuffix=core.windows.net"
-container_name_input = "ines"
-container_name_output = "inejson"
+container_name_input = "comp-dom"
+container_name_output = "comp-dom-json"
 
 blob_service_client = BlobServiceClient.from_connection_string(connection_string)
 
@@ -59,7 +59,7 @@ for blob in blobs:
     }
 
     for idx, document in enumerate(result.documents):
-        print(f"--------Analyzing document #{idx + 1} from {blob_name}--------")
+        print(f"--------Analyzing document from {blob_name}--------")
 
         document_info = {
             "doc_type": document.doc_type,
